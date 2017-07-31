@@ -1,0 +1,127 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+	<display-name>centerAdapter</display-name>
+
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>centerAdapter.root</param-value>
+	</context-param>
+	
+	<!-- 1、log4j configuration-->
+
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>log4jRefreshInterval</param-name>
+		<param-value>6000</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
+
+	<!-- 2、logback configuration -->
+	<!-- 
+	<context-param>
+		<param-name>logbackConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/logback.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+	</listener> 
+	-->
+
+	<servlet>
+		<servlet-name>springServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/config/spring/spring.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Dispatcher</servlet-name>
+		<servlet-class>ctd.servlet.Dispatcher</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>defaultServlet</servlet-name>
+		<servlet-class>com.caucho.hessian.server.HessianServlet</servlet-class>
+		<init-param>
+			<param-name>home-class</param-name>
+			<param-value>ctd.net.rpc.server.HessianServiceDispather</param-value>
+		</init-param>
+	</servlet>
+
+
+	<servlet>
+		<servlet-name>FileDownLoad</servlet-name>
+		<servlet-class>ctd.servlet.FileDownLoad</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>HttpDispatcher</servlet-name>
+		<servlet-class>com.bsoft.servlet.HttpDispatcher</servlet-class>
+		<init-param>
+			<param-name>DEBUG</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ThreadLocal</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>ConfigLoader</servlet-name>
+		<servlet-class>ctd.servlet.ConfigLoader</servlet-class>
+		<init-param>
+			<param-name>basePath</param-name>
+			<param-value>component/gis</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>HttpDispatcher</servlet-name>
+		<url-pattern>*.rpc-http</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Dispatcher</servlet-name>
+		<url-pattern>*.jsonRequest</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>defaultServlet</servlet-name>
+		<url-pattern>/rpc/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ConfigLoader</servlet-name>
+		<url-pattern>/configloader</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FileDownLoad</servlet-name>
+		<url-pattern>*.download</url-pattern>
+	</servlet-mapping>
+
+	
+	
+    <servlet>
+        <servlet-name>ExcelExportServlet</servlet-name>
+        <servlet-class>com.bsoft.servlet.ExcelExportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ExcelExportServlet</servlet-name>
+        <url-pattern>/excelExportServlet</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+		<welcome-file>login.html</welcome-file>
+	</welcome-file-list>
+</web-app>

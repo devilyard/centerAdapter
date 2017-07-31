@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Left展开菜单</title>
+	<style type="text/css">
+	*{margin: 0;padding:0;}
+	body{font-size: 12px;font-family: "STSongti-SC-Regular","Songti SC";color:#F1F1F1;background-color: #F1F1F1}
+	ul,li{list-style: none;}
+	a:link{text-decoration: none;color:#123;}
+	a:visited{text-decoration: none;color:#333333;}
+	.list{width: 190px;border-bottom:solid 1px ;margin:20px auto 0 auto;}
+	.list ul li{background-color:#F1F1F1; border:solid 1px #F1F1F1; border-bottom:0;}
+	.list ul li a{padding-left: 10px;font-size:14px; display: block;height:400;line-height: 36px;position: relative;}
+	.list ul li .inactive{ background:url(images/nav-one-arrow_u20.png) no-repeat 160px center;}
+	.list ul li ul{display: none;}
+	.list ul li ul li {background-color:#FFFFFF;border-left:0; border-right:0; border-bottom:0; }
+	.list ul li ul li a:hover{background-color:#F7F7F7!important;}
+	.list ul li ul li a{ padding-left:45px;font-size:12px;}
+	a:hover{color:#558BC8 !important;}
+	</style>
+	<script src="../easyui/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+	<div class="list">
+		<ul class="yiji">
+			<li><a href="#" class="inactive"><div style="width:20px;float:left;background:url(images/nav-one-ico_u18.png) no-repeat center;">&nbsp;</div>&nbsp;&nbsp;监控中心</a>
+				<ul style="display: none">
+					<li><a class="1" target="main" href="http://10.10.2.155:50070/dfshealth.html#tab-datanode">HDFS集群监控</a></li> 
+					<li><a class="1" target="main" href="http://10.10.2.155:60010/master-status">HBASE集群监控</a></li>
+					<li><a class="1" target="main" href="http://10.0.14.8:8223/adapter-forward/html/show.html">On-Demand监控</a></li>
+					<!-- <li><a class="1" target="main" href="http://10.10.2.155:9999/hwi/show_database.jsp?db=default">HIVE监控</a></li>   -->
+				</ul>
+			</li>
+			<li><a href="#" class="inactive"><div style="width:20px;float:left;background:url(images/nav-two-ico_u56.png) no-repeat center;">&nbsp;</div>&nbsp;&nbsp;配置管理中心</a>
+				<ul style="display: none">
+					<li><a class="1" target="main" href="index4.html" >Phoenix脚本管理</a></li>
+					<li><a class="1" target="main" href="index6.html" >数据库配置</a></li>
+				</ul>
+			</li>
+			<li><a href="#" class="inactive"><div style="width:20px;float:left;background:url(images/nav-three-ico_u74.png) no-repeat center;">&nbsp;</div>&nbsp;&nbsp;数据中心</a>
+				<ul style="display: none">
+					<li><a class="1" target="main" href="index.html">数据应用</a></li> 
+					<li><a class="1" target="main" href="index5.html">错误数据</a></li>
+					<li><a class="1" target="main" href="index2.html">待处理数据</a></li>
+					<li><a class="1" target="main" href="index3.html">MPI处理异常数据</a></li>
+					<li><a class="1" target="main" href="index7.html">数据库</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('.inactive').click(function(){
+			if($(this).siblings('ul').css('display')=='none'){
+				$(this).css("color","#558BC8");
+				$(this).parent('li').siblings('li').removeClass('inactives');//原先是加号去减号
+				$(this).addClass('inactives');//变成减号
+				$(this).siblings('ul').slideDown(100).children('li');//显示一级菜单
+			}else{
+				$(this).css("color","#333333");
+				//控制自身变成+号
+				$(this).removeClass('inactives');
+				//控制自身菜单下子菜单隐藏
+				$(this).siblings('ul').slideUp(100);//隐藏
+			}
+		})
+		
+	});
+</script>
+<script type="text/javascript">
+	$(function() {
+		$(".1").click(function(){
+                   var target = document.getElementsByClassName('1');
+                   for(var i = 0; i<target.length; i++){
+                   $(target[i]).css("color","#333333");
+                   $(target[i]).css("background-color","#FFFFFF");
+                   }
+                   $(this).css("color","#558BC8");
+                   $(this).css("background-color","#F7F7F7");
+              })
+	})
+	
+</script>
+
+</html>

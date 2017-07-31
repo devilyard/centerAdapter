@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>数据应用</title>
+	<link rel="stylesheet" type="text/css" href="../easyui/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/icon.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/demo.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/custom.css">
+	<script type="text/javascript" src="../easyui/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../easyui/validator.js"></script>
+	<script type="text/javascript" src="../easyui/easyui-lang-zh_CN.js"></script>
+	<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>	
+</head>
+<body>
+	<div style="width:100%;height:40px;background-color:#FAFAFA;">
+		<div style="width:200px;float:left;padding: 10px;color:#797979;font-size:16px">&nbsp;&nbsp;&nbsp;数据应用</div>
+		<div style="width:100px; padding: 12px;float:right;color:#797979;">数据应用</div>
+		<div style="width:5px; padding: 12px;float:right;color:#797979;">></div>
+		<div style="width:100px;float:right; text-align:right;padding: 12px;color:#347bb0;">数据中心</div>
+	</div>
+	<div>
+	<table border=0 width=100%>		
+		<tr height="40" bgcolor="#eeeeee">
+			<td align=right>
+			类型:<select id="key" name="key">
+				<option value=""></option>
+				<option value="MPIID">MPIID</option>
+				<option value="PERSONNAME">姓名</option>				
+				<option value=IDCARD>身份证号</option>
+				<option value="CARDNO">卡号</option>
+			</select>
+			值: <input type="text" id="value" name="value" size=35>
+
+			入库时间(开始): <input class="Wdate" id = "st" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly>
+			结束: <input class="Wdate" id = "et" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" readonly>
+			
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="Search()">搜索&nbsp;</a>
+			</td>
+		</tr>
+	</table></div>
+	
+	<div id="divheight" style="padding-top:0.2%;padding-left:0.2%;">		
+	<table id="dg" title="" class=""
+		method="GET" toolbar="#toolbar"
+		pagination="true" 
+		data-options="onClickCell:onClickCell" singleSelect="true">
+		<thead>
+			<tr>				
+				<th field="PAGEID" width="50"  align="center"></th>
+				<!-- <th field="ROWID">ROWID</th> -->
+				<th field="PERSONNAME" width="70" align="center">患者姓名</th>				
+				<th field="SEXCODE" width="50" align="center">性别</th>	
+				<!-- 
+				<th field="ROWKEYINDEX">行键</th>	
+				-->					
+				<th field="IDCARD" width="180" align="center">身份证号</th>
+				<th field="CARDNO" width="100" align="center">卡号</th>
+				<th field="CARDTYPECODE" width="50" align="center">卡类型</th>
+				<th field="RECORDCLASSIFYING" width="165" align="center">数据集</th>
+				<th field="UPLOADTIME" width="170" align="center">数据上传时间</th>
+				<th field="ORIGINALBODY" data-options="formatter:OriginalBody" width="130" align="center">原始数据BODY</th>
+				<th field="BODY" width="150" data-options="formatter:Body" align="center">前置机处理后的Body</th>
+				<th field="HEADER" width="100" data-options="formatter:Header" align="center">Header</th>
+				<th field="CREATEDATETIME" width="170" align="center">入库时间</th>
+				<th field="MPIID" width="280" align="center">mpiId</th>
+				<th field="MPIPROCESSRESULT" width="200" data-options="formatter:MpiprocessResult" align="center">mpiId异常信息</th>	
+			</tr>
+		</thead>
+	</table></div>
+	
+	<div id="dlg" class="easyui-dialog"
+		style="width:500px;height:400px;padding:0px 0px 0px 0px" closed="true"
+		buttons="#dlg-buttons">
+		<form id="fm" class="easyui-form" method="post">
+			<table cellpadding="0" acing="0" border="0">					
+					<td valign="top">
+						<textarea  id="QTSM" name="QTSM" style="width:440px;height:330px;"></textarea>
+					</td>				
+				</tr> 
+			</table>
+		</form>
+	</div>
+	
+	<script type="text/javascript">
+		var myheight = window.innerHeight;
+		if(typeof myheight != "number"){
+			if(document.compatMode == "CSS1Compat"){
+				myheight = document.documentElement.clientHeight;
+			}else{
+				myheight = document.body.clientHeight;
+			}
+		}
+		document.getElementById("divheight").style.height=(myheight*0.83)+"px";
+		jQuery(function() { 
+			//第一次执行时
+			$('#dg').datagrid({
+				//fitColumns:true,
+				fit:true,
+				striped : true,
+			    //url:"getHBaseData.action",
+			    //loadMsg : '数据加载中请稍后……',
+			});		     
+			$.ajax({  
+				type: "get",
+				url: "getHBaseData.action",
+				data:{"page":1,"rows":15},
+				beforeSend: function () {
+        			$("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body"); 
+     				$("<div class=\"datagrid-mask-msg\"></div>").html("数据加载中请稍后……").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 }); 
+    			},
+				success: function(result){
+					$('#dg').datagrid('loadData',{"total" : result.total,"rows" : result.rows,loadMsg : '数据加载中请稍后……'});
+					$(".datagrid-mask").remove(); 
+					$(".datagrid-mask-msg").remove();
+				} 
+			});	
+			//设置分页控件  
+			var p = $('#dg').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 15,//每页显示的记录条数，默认为10  
+				pageList : [15, 20, 50 ,100],//可以设置每页记录条数的列表  				
+				beforePageText : '第',//页数文本框前显示的汉字  
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',//   共 {total} 条记录
+				onSelectPage :function(page,rows){
+					var st=$.trim($("#st").val()); 
+					var et=$.trim($("#et").val());			
+					var key=$.trim($("#key").val());
+					var value=$.trim($("#value").val());
+					value=encodeURIComponent(value);
+					$.ajax({
+						url:'getHBaseData.action',
+						type:'get',
+						data: {st:st,et:et,page:page,rows:rows,key:key,value:value},
+						beforeSend: function () {
+		        			$("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body"); 
+		     				$("<div class=\"datagrid-mask-msg\"></div>").html("数据加载中请稍后……").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 }); 
+		    			},
+						success: function(result){
+							$('#dg').datagrid('loadData',{"total" : result.total,"rows" : result.rows});
+							$(".datagrid-mask").remove(); 
+							$(".datagrid-mask-msg").remove();
+						}
+					});
+				}
+			});
+		})
+	</script>
+ 
+	<script type="text/javascript">
+		
+		function Header(rowIndex, field, value) {
+			return '<FONT COLOR=BLUE><U>Header</U></FONT>';
+		}
+		function Body(rowIndex, field, value) {
+			return '<FONT COLOR=BLUE><U>Body</U></FONT>';
+		}
+		function OriginalBody(rowIndex, field, value) {
+			return '<FONT COLOR=BLUE><U>OriginalBody</U></FONT>';
+		}
+		function MpiprocessResult(rowIndex, field, value) {
+			if(rowIndex!=null&&rowIndex!=''){
+				return '<FONT COLOR=BLUE><U>MpiprocessResult</U></FONT>';
+			}else{
+				return null;
+			}
+		}
+		function onClickCell(rowIndex, field, value) {
+			//选择单击的当前行
+			$('#dg').datagrid('selectRow', rowIndex);
+			var row = $('#dg').datagrid('getSelected');		
+			if (field == "ORIGINALBODY"){			
+				$('#dlg').dialog('open').dialog('setTitle', '查看明细:OriginalBody');
+				document.getElementById("QTSM").innerHTML=row.ORIGINALBODY;
+			}
+			if (field == "BODY"){			
+				$('#dlg').dialog('open').dialog('setTitle', '查看明细:Body');
+				document.getElementById("QTSM").innerHTML=row.BODY;
+			}
+			if (field == "HEADER"){			
+				$('#dlg').dialog('open').dialog('setTitle', '查看明细:Header');
+				document.getElementById("QTSM").innerHTML=row.HEADER;
+			}
+			if (field == "MPIPROCESSRESULT"){	
+				if(row.MPIPROCESSRESULT.length>0){		
+					$('#dlg').dialog('open').dialog('setTitle', '查看明细:MPI处理异常信息');
+					document.getElementById("QTSM").innerHTML=row.MPIPROCESSRESULT;
+				}
+			}							
+		}
+
+		//查询按钮触发事件
+		function Search() {
+			var st=$.trim($("#st").val()); 
+			var et=$.trim($("#et").val());			
+			var key=$.trim($("#key").val());
+			var value=$.trim($("#value").val());
+			if(st=="" && et=="" && key=="" && value==""){
+				$.messager.alert('提示', '请填写需要查询的参数!');
+				return;
+			}
+			if(value!="" && key ==""){
+				$.messager.alert('提示', '请选择需要查询的类型!');
+				return;
+			}	
+/* 			if(value ==""){
+				$.messager.alert('提示', '请输入需要查询的值!');
+				return;
+			} */
+			setFirstPage("#dg");
+			value=encodeURIComponent(value);
+			var page=$('#dg').datagrid('getPager').data("pagination").options.pageNumber;
+	 		var rows=$('#dg').datagrid('getPager').data("pagination").options.pageSize;
+			$.ajax({  
+				type: "get",
+				url: "getHBaseData.action",
+				data: {st:st,et:et,page:page,rows:rows,key:key,value:value},				
+				success: function(result){
+					$('#dg').datagrid('loadData',{"total" : result.total,"rows" : result.rows});
+				}, 
+			});		
+		}
+
+		function setFirstPage(ids) {
+			var opts = $(ids).datagrid('options');
+			var pager = $(ids).datagrid('getPager');
+			opts.pageNumber = 1;
+			opts.pageSize = opts.pageSize;
+			pager.pagination('refresh', {
+				pageNumber : 1,
+				pageSize : opts.pageSize
+			});
+		}
+	</script>
+	
+	<style type="text/css">
+		#fm {
+			margin: 0;
+			padding: 10px 30px;
+		}
+		
+		.ftitle {
+			font-size: 14px;
+			font-weight: bold;
+			padding: 5px 0;
+			margin-bottom: 10px;
+			border-bottom: 1px solid #ccc;
+		}
+		
+		.fitem {
+			margin-bottom: 5px;
+		}
+		
+		.fitem label {
+			display: inline-block;
+			width: 80px;
+		}
+</style>
+</body>
+</html>

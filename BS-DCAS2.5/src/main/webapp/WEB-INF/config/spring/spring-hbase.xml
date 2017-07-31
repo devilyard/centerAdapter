@@ -1,0 +1,56 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+	<context:property-placeholder location="/WEB-INF/hadoop.properties" />
+
+	<!-- 配置zookeeper地址和端口 :org.apache.hadoop.hbase.HBaseConfiguration-->
+	<hdp:hbase-configuration id="hbaseConfiguration"
+		zk-quorum="${hbase.zk.quorum}" zk-port="${hbase.zk.port}" />
+
+	<!-- 配置HbaseTemplate -->
+	<bean id="htemplate" class="org.springframework.data.hadoop.hbase.HbaseTemplate">
+		<property name="configuration" ref="hbaseConfiguration" />
+	</bean>
+	
+	<!-- TOMCAT容器启动时rpc平台daset.xml文件配置 -->
+	<bean id="getDasetFile" class="com.bsoft.service.GetDataSetXmlFileService">
+	    <!-- 前置机校验通过的数据，调用mongodb服务。数据处理是异步的 -->
+	    <!-- 平台2.1.4的配置 -->
+		<!-- <property name="SERVICENAME" value="configuration.dictionaryLoader" /> -->
+		<!-- <property name="METHOD" value="getDictionaryDoc" /> -->
+		<!-- <property name="PARAMS" value="configuration.resDataSet" /> -->
+		<!-- 平台2.3的配置 -->
+		<property name="SERVICENAME" value="platform.remoteDictionaryLoader" />
+		<property name="METHOD" value="load" />
+		<property name="PARAMS" value="platform.dataset.dic.resDataSet" />
+		<!-- 平台版本配置 -->
+		<property name="SSDEVERSION" value="2.3" />
+		<!-- daset.xml文件路径配置 -->
+		<property name="PATHNAME" value="${centerAdapter.root}/WEB-INF/config/dataset/dataset.xml" />
+	</bean>
+	
+	<!-- hbase业务层 -->
+	<bean id="hbaseService" class="com.bsoft.service.impl.hbase.HBaseServiceImpl">
+		<property name="hbaseDAOService" ref="hbaseDAOService" />
+		<property name="phoienixDAOService" ref="phoienixDAOService" />
+		<!-- HBASE表、列族信息采集器，可以灵活扩展-->
+		<property name="fileCollector" ref="fileCollector" />
+	</bean>
+
+	<!-- 操作文件 -->
+	<bean id="fileCollector" class="com.bsoft.util.FileCollector" depends-on="getDasetFile">
+		<!-- hbase操作表的定义路径 -->
+		<property name="filePath"
+			value="${centerAdapter.root}/WEB-INF/config/dataset/" />
+	</bean>
+
+	<!-- HBASE操作的具体实现类-->
+	<bean id="hbaseDAOService" class="com.bsoft.dao.hadoop.hbase.impl.HBaseDAOImpl">
+		<property name="htemplate" ref="htemplate" />
+	</bean>
+</beans>

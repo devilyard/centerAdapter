@@ -1,0 +1,49 @@
+.x-fieldset-body {
+    padding:4px;
+}
+
+.x-form-item label.x-form-item-label {
+    display:block;
+    float:left;
+    width:100px;
+    padding:3px;
+    padding-left:0;
+    clear:left;
+    z-index:2;
+    position:relative;
+}
+
+.x-form-element {
+    padding-left:105px;
+    position:relative;
+}
+
+.x-form-item {
+    display:block;
+    margin-bottom:4px;
+    zoom:1;
+}
+
+.x-form-clear-left {
+    clear:left;
+    height:0;
+    overflow:hidden;
+    line-height:0;
+    font-size:0;
+}
+
+.x-fieldset {
+    border:1px solid;
+    padding:10px;
+    margin-bottom:10px;
+    display:block; /* preserve margins in IE */
+}
+
+/* make top of checkbox/tools visible in webkit */
+.ext-webkit .x-fieldset-header {
+    padding-top: 1px;
+}
+
+.ext-ie .x-fieldset legend {
+    margin-bottom:10px;
+}

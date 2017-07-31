@@ -1,0 +1,52 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+	<context:property-placeholder location="/WEB-INF/hadoop.properties" />
+
+	<!-- 配置Phoenix数据源-->
+	<bean id="phoenixDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="org.apache.phoenix.jdbc.PhoenixDriver" />
+		<property name="url" value="jdbc:phoenix:${hbase.zk.quorum}" />
+		<property name="username" value="" />
+		<property name="password" value="" />
+		<property name="initialSize" value="10" />
+		<property name="maxActive" value="5" />
+		<!--
+			因为Phoenix进行数据更改时不会自动的commit,必须要添加defaultAutoCommit属性,否则会导致数据无法提交的情况
+		-->
+		<property name="defaultAutoCommit" value="true" />
+	</bean>
+
+	<!-- 选择JDBC模板-->
+	<bean id="phoenixJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="phoenixDataSource" />
+		<qualifier value="phoenixJdbcTemplate" />
+	</bean>
+	
+	<!-- 选择phoenix.view生成位置和DataSet特殊字符配置-->
+	<bean id="phoenixDataSet" class="com.bsoft.service.impl.phoenix.PhoenixViewServiceImpl">
+		<property name="filePath" value="${centerAdapter.root}/WEB-INF/config/phoenix-sql/" />
+		<property name="phoenixViewFileName" value="phoenixView" />
+		<property name="phoenixSEQFileName" value="phoenixSEQ" />
+		<property name="specialCharacter" value="GROUP,CYCLE,DEX62.10.001.03,DEX62.10.001.01,DEX62.10.001.02"/>
+		<!-- phoenixRPC获取平台数据集节点服务和方法配置 -->
+		<!-- 平台2.3 rpc获取平台数据集节点服务和方法配置 -->
+		<property name="SERVICENAME" value="platform.dataElementLoader"/>
+		<!-- 平台2.1.4 rpc获取平台数据集节点服务和方法配置 -->
+		<!-- <property name="SERVICENAME" value="configuration.dataElementLoader"/> -->
+		<property name="METHOD" value="getDataSet"/>
+	</bean>
+
+	<!-- phoienix数据库具体实现类 -->
+	<bean id="phoienixDAOService" class="com.bsoft.dao.hadoop.phoienix.impl.PhoienixDAOImpl">
+		<property name="jdbcTemplate" ref="phoenixJdbcTemplate" />
+		<!-- SEQ操作对象,可能需要优化,因为目前是多表共用一个seqName,SEQ不连贯，但不影响功能 -->
+		<!-- <property name="seqName" value="SEQ_EHRMAIN" /> -->
+	</bean>
+</beans>

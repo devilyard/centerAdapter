@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>数据库</title>
+	<link rel="stylesheet" type="text/css" href="../easyui/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/icon.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/demo.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/custom.css">
+	<script type="text/javascript" src="../easyui/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../easyui/validator.js"></script>
+	<script type="text/javascript" src="../easyui/easyui-lang-zh_CN.js"></script>
+	<style type="text/css">
+	    .mytable{
+	        border:0px;
+	        width:100%;
+	    }
+	    .pagingstyle{
+	        text-align:center;
+	        border:1px solid #C0C0C0;
+	        padding-top:3px;
+	        padding-bottom:3px;
+	        padding-right:8px;
+	        padding-left:8px
+	    }
+	    #fm {
+			margin: 0;
+			padding: 10px 30px;
+		}
+		
+		.ftitle {
+			font-size: 14px;
+			font-weight: bold;
+			padding: 5px 0;
+			margin-bottom: 10px;
+			border-bottom: 1px solid #ccc;
+		}
+		
+		.fitem {
+			margin-bottom: 5px;
+		}
+		
+		.fitem label {
+			display: inline-block;
+			width: 80px;
+		}
+	</style>
+	<script type="text/javascript">
+	//每页大小
+	var pageSize=20;
+	var mysql="";
+	$(function(){
+		//高度适应
+ 		var myheight = window.innerHeight;
+		if(typeof myheight != "number"){
+			if(document.compatMode == "CSS1Compat"){
+				myheight = document.documentElement.clientHeight;
+			}else{
+				myheight = document.body.clientHeight;
+			}
+		}
+		var otherheight = document.getElementById("otherheight").offsetHeight;
+		document.getElementById("divheight").style.height=(myheight-otherheight-10)+"px";
+/*   		if(myheight>854 && myheight<=867){
+			document.getElementById("divheight").style.height=(myheight*0.72)+"px";
+		}else if(myheight>668 && myheight<=678){
+			document.getElementById("divheight").style.height=(myheight*0.653)+"px";
+		}else if(myheight>899 && myheight<=909){
+			document.getElementById("divheight").style.height=(myheight*0.73)+"px";
+		}else if(myheight>788 && myheight<=798){
+			document.getElementById("divheight").style.height=(myheight*0.693)+"px";
+		}else if(myheight>586 && myheight<=596){
+			document.getElementById("divheight").style.height=(myheight*0.595)+"px";
+		}else if(myheight>922 && myheight<=932){
+			document.getElementById("divheight").style.height=(myheight*0.735)+"px";
+		}else if(myheight>822 && myheight<=832){
+			document.getElementById("divheight").style.height=(myheight*0.71)+"px";
+		}else if(myheight>1032 && myheight<=1042){
+			document.getElementById("divheight").style.height=(myheight*0.76)+"px";
+		}else if(myheight>763 && myheight<=773){
+			document.getElementById("divheight").style.height=(myheight*0.68)+"px";
+		}else if(myheight>628 && myheight<=636){
+			document.getElementById("divheight").style.height=(myheight*0.61)+"px";
+		}else{
+			document.getElementById("divheight").style.height=(myheight*0.54)+"px";
+		} */
+		//获取数据源
+		getDatasources();
+		//关联表信息
+		var selectds = document.getElementById("ds");
+		selectds.onchange = function(){
+			getTables(selectds.options[selectds.selectedIndex].value);
+		}
+		var myselecttabs = document.getElementById("tbs");
+		myselecttabs.onchange = function(){
+			var mysqltext = document.getElementById("sqltext");
+			var selectedindex = myselecttabs.selectedIndex;
+			mysqltext.value = "select * from "+myselecttabs.options[selectedindex].text;
+		}
+	});
+	//下拉框获取数据源
+	function getDatasources(){
+		var selectBox = document.getElementById("ds");
+		$.ajax({
+			type:'get',
+			dataType:'json',
+			url:'getDbConfig.action',
+			success:function(result){
+				if(result.success==200){
+					selectBox.innerHTML="";
+					var list=result.list;
+					var value="";
+					var text="";
+					var newOption = new Option(text, value);
+					selectBox.add(newOption,undefined);
+					for(var i=0; i<list.length; i++){
+						value = list[i].DBID;
+						text = list[i].DBNAME;
+						var newOption = new Option(text, value);
+						selectBox.add(newOption,undefined);
+					}
+				}
+			},
+			complete:function(){
+				var svalu = selectBox.options[selectBox.selectedIndex].value;
+				getTables(svalu);
+			}
+		});
+	}
+	//根据不同数据源获取表信息
+	function getTables(svalu){
+		var selecttbs = document.getElementById("tbs");
+		selecttbs.innerHTML="";
+		if(svalu!=""){
+			$.ajax({
+				type:'get',
+				dataType:'json',
+				data:{"dbid":svalu},
+				url:'getTables.action',
+				success:function(result){
+					if(result.success==200){
+						selecttbs.innerHTML="";
+						var list=result.list;
+						var value="";
+						var text="";
+						var newOption = new Option(text, value);
+						selecttbs.add(newOption,undefined);
+						for(var i=0; i<list.length; i++){
+							var j = i+1;
+							value = "tb"+j;
+							text = getJsonValue(list[i],value);
+							if(text!="CATALOG" && text!="FUNCTION" && text!="SEQUENCE" && text!="STATS"){
+								var newOption = new Option(text, value);
+								selecttbs.add(newOption,undefined);
+							}
+						}
+					}
+				}
+			});
+		}
+	}
+	//执行SQL
+	function execute(){
+		var sql = $("#sqltext").val();
+		var selectdatas = document.getElementById("ds");
+		var dbid = selectdatas.options[selectdatas.selectedIndex].value;
+		//var selecttable = document.getElementById("tbs");
+		//var tablename = selecttable.options[selecttable.selectedIndex].text;
+		//tablename = encodeURIComponent(tablename);
+		sql = encodeURIComponent(sql);
+		dbid = encodeURIComponent(dbid);
+		mysql = sql;
+		pageTotal = 0;
+		//动态获取列标题
+		$.ajax({
+			type:'get',
+			dataType:'json',
+			url:'executeSQL.action',
+			data:{"sql":mysql,"dbid":dbid,"pageNum":1,"pageSize":pageSize},
+			beforeSend: function () {
+    			$("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body"); 
+ 				$("<div class=\"datagrid-mask-msg\"></div>").html("数据加载中请稍后……").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 }); 
+			},
+			success:function(result){
+				document.getElementById("error").innerHTML="";
+				if(result.success==200){
+					var list = result.hibernatedata.list;
+					var title = result.jdbcdata.title;
+					var titlelength = result.jdbcdata.titlelength;
+					var total = result.jdbcdata.pageTotal;
+					var columns=new Array(); 
+					var checkb={};
+					checkb["field"]='ck';
+					checkb["checkbox"]=true;
+					columns.push(checkb);
+					for(var i=1; i<=titlelength; i++){
+						var column={};
+						var columnwidth;
+						if(title[i]=="PK"){
+							columnwidth=title[i].length*120;
+						}else{
+							columnwidth=title[i].length*12;
+						}
+						if(title[i]=="HEADER"){
+							column["formatter"]=Header;
+						}
+						if(title[i]=="BODY"){
+							column["formatter"]=Body;
+						}
+						if(title[i]=="ORIGINALBODY"){
+							column["formatter"]=OriginalBody;
+						}
+						if(title[i]=="MPIPROCESSRESULT"){
+							column["formatter"]=MpiprocessResult;
+						}
+		                column["title"]=title[i];  
+		                column["field"]=title[i];  
+		                column["align"]='center';
+		                column["width"]=columnwidth;  
+		                columns.push(column);
+					}
+					if(list.length==0){
+						total=total-1;
+					}
+					//加载表格信息
+					$('#dg').datagrid({
+						fit:true,
+						fitColumns:false,
+						striped : true,
+					    pagination : true,
+					    singleSelect : false,
+					    checkOnSelect : true,
+					    rownumbers:true,
+					    loadMsg : '数据加载中请稍后……',
+					    columns:[columns],
+					    onClickCell:onClickCell
+					}).datagrid('loadData',{"rows" : list,"total":total});
+					if(list.length==0){
+	                    $("#dg").datagrid("insertRow",{row:{}});
+	                    $("tr[datagrid-row-index='0']").css({"visibility":"hidden"});
+					}
+					var p = $('#dg').datagrid('getPager');
+					$(p).pagination({
+						pageSize : 20,//每页显示的记录条数，默认为10  
+						pageList : [15, 20, 50 ,100],//可以设置每页记录条数的列表  				
+						beforePageText : '第',//页数文本框前显示的汉字  
+						afterPageText : '页    共 {pages} 页',
+						displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',//   共 {total} 条记录
+						onSelectPage :function(page,rows){
+							$.ajax({
+								url:'executeSQL.action',
+								type:'get',
+								data: {"sql":mysql,"dbid":dbid,"pageNum":page,"pageSize":rows},
+								beforeSend: function () {
+					    			$("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body"); 
+					 				$("<div class=\"datagrid-mask-msg\"></div>").html("数据加载中请稍后……").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 }); 
+								},
+								success: function(result){
+									document.getElementById("error").innerHTML="";
+									if(result.success==200){
+										$('#dg').datagrid('loadData',{"total" : result.jdbcdata.pageTotal,"rows" : result.hibernatedata.list});
+									}else{
+										document.getElementById("error").innerHTML=result.message;
+									}
+									$(".datagrid-mask").remove(); 
+									$(".datagrid-mask-msg").remove();
+								}
+							});
+						}
+					});
+					//加载分页
+					//pagenate(1,result.jdbcdata.pageTotal);
+				}else{
+/* 					$('#dg').datagrid({
+						columns:[[]]
+					}).datagrid("loadData",{total:0,rows:[]}); */
+					document.getElementById("error").innerHTML=result.message;
+				}
+				$(".datagrid-mask").remove(); 
+				$(".datagrid-mask-msg").remove();
+			}
+		});
+	}
+	function getJsonValue(obj,name){
+        var result = null;
+        var value  = null;
+        for(var key in obj){        
+            value = obj[key];
+            if(key == name){
+            return value;
+        } else {
+            if( typeof value == "object" ){
+            result = getJsonValue(value,name);
+            }
+        }
+    }
+    return result;
+}
+
+	function pageSearch(pageNum){
+		var selectdatas = document.getElementById("ds");
+		var dbidpage = selectdatas.options[selectdatas.selectedIndex].value;
+		dbidpage = encodeURIComponent(dbidpage);
+		$.ajax({
+			type:'get',
+			dataType:'json',
+			url:'executeSQL.action',
+			data:{"sql":mysql,"dbid":dbidpage,"pageNum":pageNum,"pageSize":pageSize},
+			beforeSend: function () {
+    			$("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body"); 
+ 				$("<div class=\"datagrid-mask-msg\"></div>").html("数据加载中请稍后……").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 }); 
+			},
+			success:function(result){
+				document.getElementById("error").innerHTML="";
+				if(result.success==200){
+					//加载表格信息
+					 $('#dg').datagrid('loadData',{"rows" : result.hibernatedata.list});
+					//重新加载分页按钮
+					pagenate(pageNum,result.jdbcdata.pageTotal);
+				}else{
+/* 					$('#dg').datagrid({
+						columns:[[]]
+					}).datagrid("loadData",{total:0,rows:[]}); */
+					document.getElementById("error").innerHTML=result.message;
+				}
+				$(".datagrid-mask").remove(); 
+				$(".datagrid-mask-msg").remove();
+			}
+		});
+	}
+	function pagenate(pageNum,pageTotal){
+		var pgstr="";
+		var pages=0;
+		if(pageTotal%pageSize==0){
+			pages=pageTotal/pageSize;
+		}else{
+			pages=Math.ceil(pageTotal/pageSize);
+		}
+		if(pages==0){
+			pageNum=1;
+			pages=1;
+		}
+		if(pageNum<1){
+			pageNum=1;
+		}else if(pageNum>pages){
+			pageNum=pages;
+		}
+		if(pageNum==1){
+			pgstr += "<span class=\"pagingstyle\"><font style=\"color:#A8A8A8;\">上一页</font></span>";
+		}else{
+			pgstr += "<span class=\"pagingstyle\"><a style=\"text-decoration:none;\" href=\"javascript:void(0)\" onclick=\"pageSearch("+(pageNum-1)+")\"><font style=\"color:#A8A8A8;\">上一页</font></a></span>";
+		}
+		if(pageNum==pages){
+			pgstr += "<span class=\"pagingstyle\"><font style=\"color:#A8A8A8;\">下一页</font></span>";
+		}else{
+			pgstr += "<span class=\"pagingstyle\"><a style=\"text-decoration:none;\" href=\"javascript:void(0)\" onclick=\"pageSearch("+(pageNum+1)+")\"><font style=\"color:#A8A8A8;\">下一页</font></a></span>";
+		}
+		document.getElementById("paging").innerHTML=pgstr;
+	}
+	
+	function Header(rowIndex, field, value) {
+		return '<FONT COLOR=BLUE><U>Header</U></FONT>';
+	}
+	function Body(rowIndex, field, value) {
+		return '<FONT COLOR=BLUE><U>Body</U></FONT>';
+	}
+	function OriginalBody(rowIndex, field, value) {
+		return '<FONT COLOR=BLUE><U>OriginalBody</U></FONT>';
+	}
+	function MpiprocessResult(rowIndex, field, value) {
+		if(rowIndex!=null&&rowIndex!=''){
+			return '<FONT COLOR=BLUE><U>MpiprocessResult</U></FONT>';
+		}else{
+			return null;
+		}
+	}
+	function onClickCell(rowIndex, field, value) {
+		//选择单击的当前行
+		$('#dg').datagrid('selectRow', rowIndex);
+		var row = $('#dg').datagrid('getSelected');		
+		if (field == "ORIGINALBODY"){			
+			$('#dlg').dialog('open').dialog('setTitle', '查看明细:OriginalBody');
+			document.getElementById("QTSM").innerHTML=row.ORIGINALBODY;
+		}
+		if (field == "BODY"){			
+			$('#dlg').dialog('open').dialog('setTitle', '查看明细:Body');
+			document.getElementById("QTSM").innerHTML=row.BODY;
+		}
+		if (field == "HEADER"){			
+			$('#dlg').dialog('open').dialog('setTitle', '查看明细:Header');
+			document.getElementById("QTSM").innerHTML=row.HEADER;
+		}
+		if (field == "MPIPROCESSRESULT"){	
+			if(row.MPIPROCESSRESULT.length>0){		
+				$('#dlg').dialog('open').dialog('setTitle', '查看明细:MPI处理异常信息');
+				document.getElementById("QTSM").innerHTML=row.MPIPROCESSRESULT;
+			}
+		}							
+	}
+	//导出excel
+	function exportExcel(){
+		$("#columns").val("");
+		$("#content").val("");
+		var selections = $("#dg").datagrid('getSelections');
+		if(selections.length==0){
+			$.messager.alert('提示', '请选择需要导出的数据!');
+			return;
+		}
+		var columns = $("#dg").datagrid('getColumnFields');
+		var jsonobj = JSON.stringify(selections);
+		var jsonobj1 = JSON.stringify(columns);
+		$("#columns").val(jsonobj1);
+		$("#content").val(jsonobj);
+		$("#excelform").submit();
+/* 		var mydata = {"content":jsonobj,"columns":jsonobj1};
+		$.ajax({
+			type:'post',
+			datatype:'json',
+			data:mydata,
+			url:"../excelExportServlet",
+			success:function(result){}
+		}); */
+	}
+</script> 
+</head>
+<body>
+    <div id="otherheight">
+	<div style="width:100%;height:40px;background-color:#FAFAFA;">
+		<div style="width:200px;float:left;padding: 10px;color:#797979;font-size:16px">&nbsp;&nbsp;&nbsp;数据库</div>
+		<div style="width:100px; padding: 12px;float:right;color:#797979;">数据库</div>
+		<div style="width:5px; padding: 12px;float:right;color:#797979;">></div>
+		<div style="width:100px;float:right; text-align:right;padding: 12px;color:#347bb0;">数据中心</div>
+	</div>
+	<div>
+	<table class="mytable">		
+		<tr height="40" bgcolor="#eeeeee">
+			<td>
+			&nbsp;&nbsp;数据库&nbsp;&nbsp;<select id="ds" name="datasource" style="height:22px;width:130px;"></select>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			表信息&nbsp;&nbsp;<select id="tbs" name="tables" style="height:22px;width:130px;"></select>
+            </td>
+		</tr>
+	</table>
+	</div>
+	<div style="padding-bottom:0.2%;padding-left:0.2%;padding-top:0.2%;padding-right:0.8%;">
+	<textarea id="sqltext" placeholder="请输入可执行SQL：select rowkey..." rows="4" style="font-size:15px;resize:none;width:100%"></textarea>
+	</div>
+	<div class="easyui-layout">
+        <div id="error" style="width:80%;float:left;color:red;margin-top:0.5%;margin-left:1%;margin-bottom:0.5%;"></div>
+	    <div style="text-align:center;width:8%;float:right;padding-right:0.5%;padding-top:0.5%;padding-bottom:0.5%;">
+	        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="execute()">执行SQL</a>&nbsp;
+	        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="exportExcel()">导出excel</a>
+	    </div>
+	</div>
+	</div>
+	<div id="divheight" style="padding-top:0.2%;padding-left:0.2%;width:auto;">		
+	<table id="dg"></table></div>
+<!-- 	<div id="paging" style="float:right;padding-top:0.4%;padding-right:0.2%;"></div>
+	</div> -->
+	<div id="dlg" class="easyui-dialog"
+		style="width:500px;height:400px;padding:0px 0px 0px 0px" closed="true"
+		buttons="#dlg-buttons">
+		<form id="fm" class="easyui-form" method="post">
+			<table cellpadding="0" acing="0" border="0">
+			<tr>					
+					<td valign="top">
+						<textarea  id="QTSM" name="QTSM" style="width:440px;height:330px;"></textarea>
+					</td>				
+				</tr> 
+			</table>
+		</form>
+	</div>
+	<div style="display:none;">
+	    <form id="excelform" action="../excelExportServlet" method="post">
+	        <input id="columns" name="columns" type="text">
+	        <input id="content" name="content" type="text">
+	    </form>
+	</div>
+</body>
+</html>

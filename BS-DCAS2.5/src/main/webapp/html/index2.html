@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="../easyui/easyui.css">
+<link rel="stylesheet" type="text/css" href="../easyui/icon.css">
+<link rel="stylesheet" type="text/css" href="../easyui/demo.css">
+<link rel="stylesheet" type="text/css" href="../easyui/custom.css">
+<script type="text/javascript" src="../easyui/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../easyui/validator.js"></script>
+<script type="text/javascript" src="../easyui/easyui-lang-zh_CN.js"></script>
+<script language="javascript" type="text/javascript"
+	src="My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+	<div class="easyui-layout" style="width:100%;height:40px;background-color:#FAFAFA;">
+		<div style="width:200px;float:left;padding: 10px;color:#797979;font-size:16px">&nbsp;&nbsp;&nbsp;待处理数据</div>
+		<div style="width:100px; padding: 12px;float:right;color:#797979;">待处理数据</div>
+		<div style="width:5px; padding: 12px;float:right;color:#797979;">></div>
+		<div style="width:100px;float:right; text-align:right;padding: 12px;color:#347bb0;">数据中心</div>
+	</div>
+	<!-- <div style="background-color:#F7F7F7;width:100%;height:550px;"> -->
+	<div id="divheight" style="padding:0.2%;">
+	<table id="cxdm" class="" style="height:550px;"
+		method="GET" singleSelect="true" pagination="true" rownumbers="true"
+		data-options="onClickCell:onClickCell" >
+		<thead>
+			<tr>
+				<th field="ID" width="" hidden="false">序列</th>
+				<th field="EventId" width="300" align="center">EventId</th>
+				<th field="UploadTime" width="150" align="center">数据上传时间</th>
+				<th field="Author" width="80" align="center">医生姓名</th>
+				<th field="AUTHORORGANIZATION_TEXT" width="110" align="center">机构名称</th>
+				<th field="RecordClassifying" width="150" align="center">数据集</th>
+				<th field="HEADER" width="100" data-options="formatter:Header" align="center">Header</th>
+				<th field="BODY" width="140" data-options="formatter:Body" align="center">前置机处理后的Body</th>
+				<th field="ORIGINALBODY" width="150" data-options="formatter:OriginalBody" align="center" fitColumns="true">原始数据Body</th>
+			</tr>
+		</thead>
+	</table>
+	</div>
+	<div id="dlg" class="easyui-dialog"
+		style="width:500px;height:400px;padding:0px 0px 0px 0px" closed="true"
+		buttons="#dlg-buttons">
+		<form id="fm" class="easyui-form" method="post">
+			<table cellpadding="0" acing="0" border="0">					
+					<td valign="top">
+						<textarea  id="QTSM" name="QTSM" style="width:440px;height:330px;"></textarea>
+					</td>				
+				</tr> 
+			</table>
+		</form>
+	</div>
+	<!-- </div> -->
+	<script type="text/javascript">
+	var myheight = window.innerHeight;
+	if(typeof myheight != "number"){
+		if(document.compatMode == "CSS1Compat"){
+			myheight = document.documentElement.clientHeight;
+		}else{
+			myheight = document.body.clientHeight;
+		}
+	}
+	document.getElementById("divheight").style.height=(myheight*0.918)+"px";
+		jQuery(function() {
+			//第一次加载页面时
+			$('#cxdm').datagrid({
+				fit : true,
+				fitColumns : true,
+				nowrap : true,
+				striped : true,
+				url : "getData.action?t="+new Date().getTime(),
+				loadMsg : '数据加载中请稍后……',
+			});
+			var p = $('#cxdm').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 15,//每页显示的记录条数，默认为10  
+				pageList : [15, 20, 50 ,100],//可以设置每页记录条数的列表  				
+				beforePageText : '第',//页数文本框前显示的汉字  
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录',//   共 {total} 条记录
+			});
+		});
+	</script>
+	
+	<script type="text/javascript">
+	
+	    function Header(rowIndex, field, value) {
+			return '<FONT COLOR=BLUE><U>Header</U></FONT>';
+		}
+		function Body(rowIndex, field, value) {
+			return '<FONT COLOR=BLUE><U>Body</U></FONT>';
+		}
+		function OriginalBody(rowIndex, field, value) {
+			return '<FONT COLOR=BLUE><U>OriginalBody</U></FONT>';
+		}
+		
+		function onClickCell(rowIndex, field, value) {
+			//选择单击的当前行
+			$('#cxdm').datagrid('selectRow', rowIndex);
+			var row = $('#cxdm').datagrid('getSelected');		
+			if (field == "ORIGINALBODY"){			
+				$('#dlg').dialog('open').dialog('setTitle', '查看明细:OriginalBody');
+				document.getElementById("QTSM").innerHTML=row.OriginalBody;
+			}
+			if (field == "BODY"){			
+				$('#dlg').dialog('open').dialog('setTitle', '查看明细:Body');
+				document.getElementById("QTSM").innerHTML=row.Body;
+			}
+			if (field == "HEADER"){			
+				$('#dlg').dialog('open').dialog('setTitle', '查看明细:Header');
+				document.getElementById("QTSM").innerHTML=row.Header;
+			}							
+		}
+		
+		function fixWidth(percent) {
+			return (document.body.clientWidth - 5) * percent;
+		}
+	</script>
+
+	<style type="text/css">
+#fm {
+	margin: 0;
+	padding: 10px 30px;
+}
+
+.ftitle {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 0;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.fitem {
+	margin-bottom: 5px;
+}
+
+.fitem label {
+	display: inline-block;
+	width: 80px;
+}
+</style>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="../easyui/easyui.css">
+<link rel="stylesheet" type="text/css" href="../easyui/icon.css">
+<link rel="stylesheet" type="text/css" href="../easyui/demo.css">
+<link rel="stylesheet" type="text/css" href="../easyui/custom.css">
+<script type="text/javascript" src="../easyui/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../easyui/validator.js"></script>
+<script type="text/javascript" src="../easyui/easyui-lang-zh_CN.js"></script>
+<script language="javascript" type="text/javascript"
+	src="My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+	<div class="easyui-layout" style="width:100%;height:40px;background-color:#FAFAFA;">
+		<div style="width:200px;float:left;padding: 10px;color:#797979;font-size:16px">&nbsp;&nbsp;&nbsp;Phoenix配置脚本</div>
+		<div style="width:100px; padding: 12px;float:right;color:#797979;">Phoenix配置脚本</div>
+		<div style="width:5px; padding: 12px;float:right;color:#797979;">></div>
+		<div style="width:100px;float:right; text-align:right;padding: 12px;color:#347bb0;">配置管理中心</div>
+	</div>
+	<div style="padding:0.2%;background-color:#eeeeee">
+	<select id="zdbb" class="easyui-combobox" panelHeight=auto>
+		<option value="all">请选择数据集版本</option>
+		<option value="V2011">V2011</option>
+		<option value="V2012">V2012</option>
+	</select>
+	&nbsp;&nbsp;
+	<button id="submit" style="" class="easyui-linkbutton" iconCls="icon-undo" onclick="GetSql()">创建数据集视图</button>
+	</div>
+	<div style="padding-top:0.3%;padding-left:0.3%;">
+	<div id="divheight" style="background-color:#F7F7F7;width:100%;">
+	<table id="cxdm" class=""
+		method="GET" singleSelect="false" rownumbers="true"
+		selectOnCheck="true">
+		<thead>
+			<tr>
+				<th field="ck" width="" checkbox="true">序列</th>
+				<th field="VersionNumber" width="100" align="center">字典版本号</th>
+				<th field="DataSet" width="250" align="center">数据集</th>
+				<th field="DataSetName" width="200" align="center">数据集名称</th>
+			</tr>
+		</thead>
+	</table>
+	</div></div>
+	<script type="text/javascript">
+		jQuery(function() {
+ 			var myheight = window.innerHeight;
+			if(typeof myheight != "number"){
+				if(document.compatMode == "CSS1Compat"){
+					myheight = document.documentElement.clientHeight;
+				}else{
+					myheight = document.body.clientHeight;
+				}
+			}
+			document.getElementById("divheight").style.height=(myheight*0.84)+"px";
+			
+			//第一次加载页面时
+			$('#cxdm').datagrid({
+				fitColumns : true,
+				fit : true,
+				nowrap : true,
+				striped : true,
+				url : "dataSet.action?version=all&t="+new Date().getTime(),
+				loadMsg : '数据加载中请稍后……',
+			});
+			$(function() {
+					$('#zdbb').combobox({
+						onChange : function(newValue, oldValue) {
+							$('#cxdm').datagrid({url:"dataSet.action?t="+new Date().getTime(),queryParams:{version:newValue,t:new Date().getTime()},method:"GET"});
+						}
+					});
+				});
+		});
+	</script>
+	<script type="text/javascript">
+		GetSql = function() {
+			var checkedItems = $('#cxdm').datagrid('getChecked');
+			var aa = [];
+			$.each(checkedItems, function(index, item) {
+				aa.push(item.DataSet);
+			});
+			var myselect = $("#zdbb").val();
+			 if(aa.length>0){
+				 $.ajax({
+					url : "getDataSet.action",
+					type : "POST",
+					data: {"data":aa, "version":myselect},
+					dataType: "json",
+					traditional: true,
+					beforeSend: function () {  
+        			// 禁用按钮防止重复提交  
+        			$("#submit").attr("disabled", true);
+        			$("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body"); 
+     				$("<div class=\"datagrid-mask-msg\"></div>").html("正在提交处理，请稍等...").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 });   
+    				},
+					success : function(data) { 
+						$(".datagrid-mask").remove(); 
+    					$(".datagrid-mask-msg").remove(); 
+						if(data.errorMessage!=null){
+							$.messager.alert('提示', data.errorMessage );
+							$('#cxdm').datagrid({url:"dataSet.action?t="+new Date().getTime(),queryParams:{version:$("#zdbb").val(),t:new Date().getTime()},method:"GET"});
+						}else{
+							$('#cxdm').datagrid({url:"dataSet.action?t="+new Date().getTime(),queryParams:{version:$("#zdbb").val(),t:new Date().getTime()},method:"GET"});
+							$.messager.alert('提示', '数据集视图创建成功');	
+						}
+					},
+					complete: function () { 
+       					$("#submit").attr("disabled", false);
+    				},
+				});
+			}else{
+				$.messager.alert('提示', '请选择数据集');
+			}
+		};
+	</script>
+
+	<style type="text/css">
+#fm {
+	margin: 0;
+	padding: 10px 30px;
+}
+
+.ftitle {
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 0;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.fitem {
+	margin-bottom: 5px;
+}
+
+.fitem label {
+	display: inline-block;
+	width: 80px;
+}
+</style>
+</body>
+</html>

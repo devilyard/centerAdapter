@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+	 <!-- 配置hadoop的基本信息 --> 
+	<hdp:configuration id="hadoopConfiguration">hdfs://172.16.171.45:9000</hdp:configuration>
+
+	<bean id="hadoopFs" class="org.springframework.data.hadoop.fs.FileSystemFactoryBean">
+		<property name="configuration" ref="hadoopConfiguration"/>
+	</bean>
+
+
+	<!-- 配置zookeeper地址和端口 :org.apache.hadoop.hbase.HBaseConfiguration-->
+	<hdp:hbase-configuration id="hbaseConfiguration"
+		zk-quorum="172.16.171.45" zk-port="2181" />
+
+	<!-- 配置HbaseTemplate -->
+	<bean id="htemplate" class="org.springframework.data.hadoop.hbase.HbaseTemplate">
+		<property name="configuration" ref="hbaseConfiguration" />
+	</bean>
+
+</beans>

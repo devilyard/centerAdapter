@@ -1,0 +1,27 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{ margin:0; padding:0; font-size:12px;list-style:none;}
+input{ border:none;}
+a:focus {
+     outline:none;
+     -moz-outline:none;
+}
+.oauth_top{background:url(../images/rhmp10.jpg) repeat-x;overflow:hidden;zoom:1;}
+.oauth_topbg{min-width:1200px;_width:expression((document.documentElement.clientWidth||document.body.clientWidth)<1200?"1200px":"");background:url(../images/rhmp11.jpg) no-repeat; height:76px; position:relative;}
+.oauth_logon{position:absolute; left:270px; top:0;}
+.oauth_main{ background:#fff url(../images/bg.jpg) repeat-x left top;}
+.oauth_loginbox{ width:712px; height:413px;margin:0 auto;margin-top:1px; background:url(../images/login_bg.png) no-repeat center; position:relative;}
+.oauth_box{width:350px; height:260px; position:absolute; left:178px; top:66px;}
+.oauth_box ul{ width:260px;margin:60px auto 0 auto;}
+.oauth_box ul li{padding:3px 0; color:#366694; font-size:14px;}
+.oauth_input_bg{ width:252px; height:32px; line-height:32px; text-indent:4px; background:url(../images/input.jpg) no-repeat 0 0;margin-bottom:10px; font-size:14px;}
+.oauth_sure_btn{display:block; width:102px; height:32px; background:url(../images/btn.gif) no-repeat 0 -62px;}
+.oauth_sure_btn:hover{ background:url(../images/btn.gif) no-repeat 0 -93px;}
+.oauth_textmain{ width:700px; height:280px;margin:0 auto;background:url(../images/shouquan_bg.jpg) no-repeat right top;}
+.oauth_bottom{background-color:#f3f1f1; border-top:1px solid #dbdbdf; border-bottom:1px solid #dbdbdf; height:56px; line-height:56px;}
+.oauth_shou_btn{ width:700px;margin:0 auto;padding-top:10px;padding-right:50px;}
+.oauth_next_btn{ width:102px; height:32px; background:url(../images/btn.gif) no-repeat 0 0; float:right; vertical-align:bottom;}
+.oauth_next_btn:hover{ background:url(../images/btn.gif) no-repeat 0 -31px;}
+.oauth_jump{ width:82px; height:28px; background:url(../images/btn.gif) no-repeat 0 -157px;margin-left:5px; float:right;}
+.oauth_jump:hover{ background:url(../images/btn.gif) no-repeat 0 -130px;}

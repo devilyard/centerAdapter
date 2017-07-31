@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hbase>
+	<!-- 主表:存储所有正确的记录 -->
+	<!-- code为HBASE表名，type为类型：T为正确表，F为错误表 -->
+	<table tableName="EHRMAIN" type="T">
+		<!-- 列族名 -->
+		<!-- 如果未指定，则默认把PATIENT节点全部解包存放到tableName中 -->
+		<columenFamily code="PATIENT" />
+		<!-- 列族名 -->
+		<!-- 如果未指定，则默认把DOCINFO节点全部解包存放到tableName中 -->
+		<columenFamily code="DOCINFO" />
+		<!-- 列族名 -->
+		<columenFamily code="RECORD">
+			<!-- 列族下对应的列的名 -->
+			<column code="EventId" />
+			<column code="UploadTime" />
+			<column code="OriginalBody" />
+			<column code="Body" />
+			<column code="Header" />
+			<column code="mpiId" />
+			<column code="mpiProcessResult" />
+			<column code="CreateDateTime" />			
+		</columenFamily>
+	</table>
+	<!-- 错误主表:存储前置机校验异常的记录 -->
+	<!-- code为HBASE表名，type为类型：T为正确表，F为错误表 -->
+	<table tableName="EHRERROR" type="F">
+		<!-- 列族名 -->
+		<!-- 如果未指定，则默认把PATIENT节点全部解包存放到tableName中 -->
+		<columenFamily code="PATIENT" />
+		<!-- 列族名 -->
+		<!-- 如果未指定，则默认把DOCINFO节点全部解包存放到tableName中 -->
+		<columenFamily code="DOCINFO" />
+		<!-- 列族名 -->
+		<columenFamily code="RECORD">
+			<!-- 列族下对应的列的名 -->
+			<column code="EventId" />
+			<column code="UploadTime" />
+			<!-- 
+			<column code="OriginalBody" />
+			<column code="Body" />
+			<column code="Header" />
+			<column code="mpiId" />
+			<column code="mpiProcessResult" />
+			-->
+			<column code="CreateDateTime" />			
+		</columenFamily>		
+	</table>
+</hbase>

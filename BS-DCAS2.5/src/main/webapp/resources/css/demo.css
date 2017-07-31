@@ -1,0 +1,147 @@
+	html,body {
+		margin:0;
+		font-size:14px;
+		font-family:"Î¢ÈíÑÅºÚ", "ËÎÌå";
+		height:100%;
+		overflow:hidden;
+	}
+
+	/**  ¶¥²¿top **/
+	.topDiv{
+		background-color:#000000;
+		height:65px;
+		width:100%;
+		position:absolute;
+		z-index:100;
+	}
+	/**  ÖÐ¼äcenter  **/
+	.centerDiv{
+		width:100%;
+		background:#f7f7f7;
+		overflow:auto;
+		top:65px;
+		bottom:30px;
+		position:absolute;
+		background-image:url(../../images/index/u71_state0.jpg);
+		z-index:90;
+		_height:100%;
+		_top:0;
+	}
+	/** ÖÐ¼äÕ¹Ê¾µÄÍ¼Æ¬div  **/
+	.centerImgDiv {
+		width:700px;
+		height:300px;
+		margin-left: -350px;
+		margin-top: -150px;
+		position: relative;/** absolute  **/
+		left: 50%;
+		top: 50%;
+	}
+
+	/** Ô²Í¼Æ¬div  **/
+	.circleImgDiv {
+		width:400px;
+		height:300px;
+		margin-left: -200px;
+		margin-top: -150px;
+		position: absolute;/** absolute  **/
+		left: 50%;
+		top: 50%;
+		z-index:110;
+	}
+
+	/**  ÔÆÍ¼Æ¬div  **/
+	.cloundImgDiv1 {
+		z-index:120;
+		width:196px;
+		height:100px;
+		position:absolute;
+		left:0;
+		top:0;
+	}
+	/**  ÔÆÍ¼Æ¬  **/
+	.cloundImgDiv2 {
+		z-index:120;
+		width:196px;
+		height:100px;
+		position:absolute;
+		right:0;
+		top:0;
+	}
+	/**  ÔÆÍ¼Æ¬  **/
+	.cloundImgDiv3 {
+		z-index:120;
+		width:196px;
+		height:100px;
+		position:absolute;
+		left:0;
+		bottom:24px;
+	}
+	/**  ÔÆÍ¼Æ¬  **/
+	.cloundImgDiv4 {
+		z-index:120;
+		width:196px;
+		height:100px;
+		position:absolute;
+		right:0;
+		bottom:24px;
+	}
+
+	/**  µ×²¿bottom  **/
+	.bottomDiv{
+		background-color:#45A1E2;
+		height:30px;
+		width:100%;
+		position:absolute;
+		z-index:100;
+		line-height:30px;
+		height:30px;
+		text-align: center;
+		bottom:0px;
+	}
+	.cloundImgDiv_text {
+	  position:relative;
+	  left:30%;
+	  top:-40%;
+	  width:100%;
+	  height:100%;
+	  font-family:'Arial Normal', 'Arial';
+	  font-weight:400;
+	  font-style:normal;
+	  font-size:14px;
+	  color:#FFFFFF;
+	}
+	/* 
+	   .left_up_show {
+	  position:relative;
+	  left:16.5%;
+	  top:15%;
+	  width:320px;
+	  height:400px;
+	  } 
+	  
+	  .left_up_show_text {
+	  position:relative;
+	  left:5%;
+	  top:-95%;
+	  }
+	  
+	  .img {
+	  	  position:relative;
+		  left:0%;
+		  top:0%;
+		  width:29px;
+		  height:29px;
+	  }
+	  .text {
+	  	  position:relative;
+		  left:13%;
+		  top:-42px;
+		  height:30px;
+		  font-family:'Arial Normal', 'Arial';
+		  font-weight:400;
+		  font-style:normal;
+		  font-size:18px;
+		  color:#FFFFFF;
+		  text-align: left;
+	  } */

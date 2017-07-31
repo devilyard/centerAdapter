@@ -1,0 +1,237 @@
+<dic id="resDataSet" alias="">
+	<item _ComposeNavItem="1" text="个人健康档案" DataStandardId="V2011"
+		iconCls="folder" key="$compose_2">
+		<item _ComposeNavItem="1" text="健康档案管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_21">
+			<item text="个人健康档案" CustomIdentify="EHR_HealthRecord"
+				DataStandardId="V2011" key="42" />
+			<item text="既往史" CustomIdentify="EHR_PastHistory"
+				DataStandardId="V2011" key="43" />
+			<item text="家庭档案" CustomIdentify="EHR_FamilyRecord"
+				DataStandardId="V2011" key="44" />
+		</item>
+		<item _ComposeNavItem="1" text="预防接种管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_22">
+			<item text="计免档案" CustomIdentify="PIV_VaccinateRecord"
+				DataStandardId="V2011" key="45" />
+			<item text="接种记录" CustomIdentify="PIV_VaccinateList"
+				DataStandardId="V2011" key="46" />
+		</item>
+		<item _ComposeNavItem="1" text="儿童保健" DataStandardId="V2011"
+			iconCls="folder" key="$compose_23">
+			<item text="体弱儿档案" CustomIdentify="CDH_DebilityChildren"
+				DataStandardId="V2011" key="47" />
+			<item text="体弱儿随访" CustomIdentify="CDH_DebilityChildrenVisit"
+				DataStandardId="V2011" key="48" />
+			<item text="儿童保健卡" CustomIdentify="CDH_HealthCard"
+				DataStandardId="V2011" key="49" />
+			<item text="周岁小结" CustomIdentify="CDH_OneYearSummary"
+				DataStandardId="V2011" key="50" />
+			<item text="意外伤害" CustomIdentify="CDH_Accident" DataStandardId="V2011"
+				key="51" />
+			<item text="儿童缺陷登记" CustomIdentify="CDH_DefectRegister"
+				DataStandardId="V2011" key="52" />
+			<item text="儿童死亡登记" CustomIdentify="CDH_DeadRegister"
+				DataStandardId="V2011" key="55" />
+			<item text="儿童询问" CustomIdentify="CDH_Inquire" DataStandardId="V2011"
+				key="56" />
+			<item text="儿童疑似残疾报告卡" CustomIdentify="CDH_DisabilityMonitor"
+				DataStandardId="V2011" key="57" />
+			<item text="儿童产时记录" CustomIdentify="CDH_DeliveryRecord"
+				DataStandardId="V2011" key="53" />
+			<item text="儿童体检" CustomIdentify="CDH_CheckUp" DataStandardId="V2011"
+				key="54" />
+		</item>
+		<item _ComposeNavItem="1" text="孕产妇健康管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_24">
+			<item text="孕妇指标" CustomIdentify="MHC_PregnantWomanIndex"
+				DataStandardId="V2011" key="65" />
+			<item text="孕妇档案" CustomIdentify="MHC_PregnantRecord"
+				DataStandardId="V2011" key="58" />
+			<item text="产后42天检查" CustomIdentify="MHC_Postnatal42DayRecord"
+				DataStandardId="V2011" key="59" />
+			<item text="孕妇特殊情况" CustomIdentify="MHC_PregnantSpecial"
+				DataStandardId="V2011" key="60" />
+			<item text="新生儿基本信息" CustomIdentify="MHC_BabyVisitInfo"
+				DataStandardId="V2011" key="61" />
+			<item text="新生儿随访记录" CustomIdentify="MHC_BabyVisitRecord"
+				DataStandardId="V2011" key="62" />
+			<item text="孕妇随访记录" CustomIdentify="MHC_VisitRecord"
+				DataStandardId="V2011" key="63" />
+			<item text="产后访视信息" CustomIdentify="MHC_PostnatalVisitInfo"
+				DataStandardId="V2011" key="64" />
+			<item text="高危因素" CustomIdentify="MHC_HighRiskVisitReason"
+				DataStandardId="V2011" key="66" />
+		</item>
+		<item _ComposeNavItem="1" text="老年人健康管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_25">
+			<item text="老年人健康档案" CustomIdentify="MDC_OldPeopleRecord"
+				DataStandardId="V2011" key="68" />
+			<item text="老年人随访" CustomIdentify="MDC_OldPeopleVisit"
+				DataStandardId="V2011" key="67" />
+		</item>
+		<item _ComposeNavItem="1" text="高血压管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_26">
+			<item text="高血压随访" CustomIdentify="MDC_HypertensionVisit"
+				DataStandardId="V2011" key="73" />
+			<item text="高血压首诊测压" CustomIdentify="MDC_HypertensionFirst"
+				DataStandardId="V2011" key="69" />
+			<item text="高血压档案" CustomIdentify="MDC_HypertensionRecord"
+				DataStandardId="V2011" key="70" />
+			<item text="高血压门诊记录" CustomIdentify="MDC_HypertensionClinicRecord"
+				DataStandardId="V2011" key="71" />
+			<item text="高血压询问" CustomIdentify="MDC_HypertensionInquire"
+				DataStandardId="V2011" key="72" />
+		</item>
+		<item _ComposeNavItem="1" text="糖尿病管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_27">
+			<item text="糖尿病档案" CustomIdentify="MDC_DiabetesRecord"
+				DataStandardId="V2011" key="74" />
+			<item text="糖尿病询问" CustomIdentify="MDC_DiabetesInquire"
+				DataStandardId="V2011" key="75" />
+			<item text="糖尿病随访" CustomIdentify="MDC_DiabetesVisit"
+				DataStandardId="V2011" key="76" />
+		</item>
+		<item _ComposeNavItem="1" text="精神病管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_28">
+			<item text="精神病档案" CustomIdentify="PSY_PsychosisRecord"
+				DataStandardId="V2011" key="77" />
+			<item text="精神病随访" CustomIdentify="PSY_PsychosisVisit"
+				DataStandardId="V2011" key="78" />
+			<item text="精神病随访用药" CustomIdentify="PSY_PsychosisVisitMedicine"
+				DataStandardId="V2011" key="79" />
+		</item>
+		<item _ComposeNavItem="1" text="体检录入" DataStandardId="V2011"
+			iconCls="folder" key="$compose_29">
+			<item text="体检档案" CustomIdentify="PER_CheckUpRegister"
+				DataStandardId="V2011" key="80" />
+		</item>
+		<item _ComposeNavItem="1" text="婚检管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_30">
+			<item text="婚检档案" CustomIdentify="PMC_PremaritalRecord"
+				DataStandardId="V2011" key="81" />
+		</item>
+		<item _ComposeNavItem="1" text="肿瘤管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_31">
+			<item text="肿瘤档案" CustomIdentify="MDC_TumourRecord"
+				DataStandardId="V2011" key="82" />
+			<item text="肿瘤随访" CustomIdentify="MDC_TumourVisit"
+				DataStandardId="V2011" key="83" />
+		</item>
+		<item _ComposeNavItem="1" text="无偿献血管理" DataStandardId="V2011"
+			iconCls="folder" key="$compose_32">
+			<item text="献血记录" CustomIdentify="DBR_DonateBloodRecord"
+				DataStandardId="V2011" key="84" />
+		</item>
+		<item _ComposeNavItem="1" text="公共基础表" DataStandardId="V2011"
+			iconCls="folder" key="$compose_33" />
+	</item>
+	<item _ComposeNavItem="1" text="临床诊疗信息" DataStandardId="V2012"
+		iconCls="folder" key="$compose_36">
+		<item _ComposeNavItem="1" text="住院就诊信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_39">
+			<item text="住院体温单" CustomIdentify="Ipt_SignsRecord"
+				DataStandardId="V2012" key="148" />
+			<item text="住院就诊记录表" CustomIdentify="Ipt_Record" DataStandardId="V2012"
+				key="110" />
+			<item text="住院医嘱明细表" CustomIdentify="Ipt_AdviceDetail"
+				DataStandardId="V2012" key="147" />
+			<item text="住院入院记录" CustomIdentify="Ipt_AdmissionNote"
+				DataStandardId="V2012" key="114" />
+			<item text="住院出院记录" CustomIdentify="Ipt_LeaveRecord"
+				DataStandardId="V2012" key="115" />
+		</item>
+		<item _ComposeNavItem="1" text="住院病案信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_43">
+			<item text="住院病案首页(2012)" CustomIdentify="Ipt_MedicalRecordPage_New"
+				DataStandardId="V2012" key="113" />
+			<item text="住院病案首页(2002)" CustomIdentify="Ipt_MedicalRecordPage"
+				DataStandardId="V2012" key="112" />
+		</item>
+		<item _ComposeNavItem="1" text="输血史信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_55">
+			<item text="输血史记录" CustomIdentify="Pt_Transfusion"
+				DataStandardId="V2012" key="126" />
+		</item>
+		<item _ComposeNavItem="1" text="手术记录信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_54">
+			<item text="手术记录" CustomIdentify="Pt_Operation" DataStandardId="V2012"
+				key="125" />
+		</item>
+		<item _ComposeNavItem="1" text="过敏史信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_56">
+			<item text="过敏史记录" CustomIdentify="Pt_Allergy" DataStandardId="V2012"
+				key="127" />
+		</item>
+		<item _ComposeNavItem="1" text="药物毒物依赖信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_57">
+			<item text="药物毒物依赖史记录" CustomIdentify="Pt_MedicineRely"
+				DataStandardId="V2012" key="128" />
+		</item>
+		<item _ComposeNavItem="1" text="检验报告" DataStandardId="V2012"
+			iconCls="folder" key="$compose_40">
+			<item text="检验报告" CustomIdentify="Pt_LabReport" DataStandardId="V2012"
+				key="111" />
+		</item>
+		<item _ComposeNavItem="1" text="门诊就诊信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_38">
+			<item text="门诊就诊记录表" CustomIdentify="Opt_Record" DataStandardId="V2012"
+				key="106" />
+			<item text="门诊处方记录表" CustomIdentify="Opt_Recipe" DataStandardId="V2012"
+				key="107" />
+			<item text="挂号表" CustomIdentify="Opt_Register" DataStandardId="V2012"
+				key="145" />
+			<item text="门诊收费表" CustomIdentify="Opt_Fee" DataStandardId="V2012"
+				key="109" />
+		</item>
+		<item _ComposeNavItem="1" text="检查报告" DataStandardId="V2012"
+			iconCls="folder" key="$compose_41">
+			<item text="检查报告" CustomIdentify="Pt_ExamReport" DataStandardId="V2012"
+				key="119" />
+		</item>
+		<item _ComposeNavItem="1" text="诊断明细报告" DataStandardId="V2012"
+			iconCls="folder" key="$compose_42">
+			<item text="诊断明细报告" CustomIdentify="Pt_Diagnosis"
+				DataStandardId="V2012" key="120" />
+		</item>
+		<item _ComposeNavItem="1" text="健康体检信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_45">
+			<item text="体检记录" CustomIdentify="Cu_Register" DataStandardId="V2012"
+				key="116" />
+		</item>
+		<item _ComposeNavItem="1" text="统计信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_46">
+			<item text="费用和人次经济" CustomIdentify="Tj_ClinicFP"
+				DataStandardId="V2012" key="117" />
+		</item>
+		<item _ComposeNavItem="1" text="分时段诊疗信息" DataStandardId="V2012"
+			iconCls="folder" key="$compose_47">
+			<item text="分时段诊疗信息" CustomIdentify="Pt_Treatment_D"
+				DataStandardId="V2012" key="118" />
+			<item text="当天分时段候诊表" CustomIdentify="Pt_Treatment"
+				DataStandardId="V2012" key="146" />
+		</item>
+	</item>
+	<item _ComposeNavItem="1" text="精卫信息" DataStandardId="V2012"
+		iconCls="folder" key="$compose_94">
+		<item _ComposeNavItem="1" text="精卫信息01" DataStandardId="V2012"
+			iconCls="folder" key="$compose_96">
+			<item text="免费用药" CustomIdentify="JS07" DataStandardId="V2012"
+				key="210" />
+			<item text="精神病专项档案" CustomIdentify="JS01" DataStandardId="V2012"
+				key="185" />
+			<item text="疾病与变动报告卡" CustomIdentify="JS02" DataStandardId="V2012"
+				key="205" />
+			<item text="精神病随访登记" CustomIdentify="JS03" DataStandardId="V2012"
+				key="206" />
+			<item text="应急处置" CustomIdentify="JS04" DataStandardId="V2012"
+				key="207" />
+			<item text="康复及效果综合评价" CustomIdentify="JS05" DataStandardId="V2012"
+				key="208" />
+			<item text="实验室检查" CustomIdentify="JS06" DataStandardId="V2012"
+				key="209" />
+			<item text="住院医疗救助" CustomIdentify="JS08" DataStandardId="V2012"
+				key="211" />
+		</item>
+	</item>
+</dic>

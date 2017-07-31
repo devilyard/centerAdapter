@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ssdev="http://www.bsoft.com.cn/schema/ssdev"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd         
+	http://www.bsoft.com.cn/schema/ssdev
+	http://www.bsoft.com.cn/schema/ssdev/ssdev.xsd">
+
+
+	<!-- TOMCAT容器启动时执行的入口程序 -->
+	<bean id="startProcessService" class="com.bsoft.thread.DataProcessThread">
+		<!-- 数据处理的监听程序-->
+		<property name="listenerProcess" ref="listenerProcessList" />
+		<property name="mongoDAOService" ref="mongoDAOService" />
+	</bean>
+
+	<!-- rpc服务发布类 -->
+	<bean id="rpcService" class="com.bsoft.service.impl.rpc.RPCServiceImpl">
+		<!-- 前置机校验通过的数据，调用mongodb服务。数据处理是异步的 -->
+		<property name="mongoDao" ref="mongoDAOService" />
+		<!-- 前置机校验失败的数据，调用hbase服务。数据处理是同步的 -->
+		<property name="hbaseService" ref="hbaseService" />
+	</bean>
+	
+	<!-- 错误mpi重新处理类 -->
+	<bean id="dataService" class="com.bsoft.service.impl.Process.DataProcessServiceImpl">
+		<property name="listenerProcess" ref="listenerProcessList" />
+		<property name="mongoDAOService" ref="mongoDAOService" />
+		<property name="collectMap" ref="collectMap" />
+	</bean>
+
+	<!-- 以下处理的业务是有先后顺序 -->
+	<!-- 业务过程可以重用 -->
+	<bean id="listenerProcessList" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<!-- MPI处理 -->
+				<ref bean="mpiThreadPoolService" />
+				<!-- 插入MONGODB：为解包使用 -->
+				<ref bean="mongodbService" />
+				<!-- 插入HBASE：WEB应用查询和展示 -->
+				<ref bean="hbaseService" />
+				<!-- 插入HDFS：保存XML明细。目前性能不好-->
+				<!-- 
+				<ref bean="hadoopService" />	
+				-->
+				<!-- BLOB数据保存到oracle中 -->
+				 
+				<ref bean="oracleService" />
+				
+			</list>
+		</constructor-arg>
+	</bean>
+
+</beans>
+
+	
+	

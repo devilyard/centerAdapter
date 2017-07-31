@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ssdev="http://www.bsoft.com.cn/schema/ssdev"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd         
+	http://www.bsoft.com.cn/schema/ssdev
+	http://www.bsoft.com.cn/schema/ssdev/ssdev.xsd">
+
+	<ssdev:applicationDomain name="centerAdapter"
+		registryAddress="zookeeper://10.0.14.8:2181" rpcServerWorkUrl="hessian://localhost:8223/centerAdapter/rpc/" />
+
+	<!-- 发布rpc服务：供前置机调用 -->
+	<ssdev:service id="centerService" ref="rpcService" />
+	<ssdev:service id="centerRaw" class="com.bsoft.service.impl.rpc.RPCRawDataServiceImpl" />
+
+</beans>
+
+	
+	

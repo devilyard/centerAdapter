@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>数据库配置</title>
+	<link rel="stylesheet" type="text/css" href="../easyui/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/icon.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/demo.css">
+	<link rel="stylesheet" type="text/css" href="../easyui/custom.css">
+	<script type="text/javascript" src="../easyui/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="../easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../easyui/validator.js"></script>
+	<script type="text/javascript" src="../easyui/easyui-lang-zh_CN.js"></script>
+	<style type="text/css">
+	    .mytable{
+	        border:0px;width:100%
+	    }
+	    
+	    .btn{
+	        text-align:right;
+	    }
+	    
+	    #dlg{
+	        width:350px;
+	        height:270px;
+	        padding:0px 0px 0px 0px
+	    }
+	    
+	    .tr{
+	        height:60px
+	    }
+	    
+	    .td1{
+	        width:170px;
+	        text-align:center;
+	    }
+	    
+	    .td2{
+	        width:120px;
+	        text-align:center;
+	    }
+	</style>
+	<script type="text/javascript">
+	$(function(){
+		//高度适应
+		var myheight = window.innerHeight;
+		if(typeof myheight != "number"){
+			if(document.compatMode == "CSS1Compat"){
+				myheight = document.documentElement.clientHeight;
+			}else{
+				myheight = document.body.clientHeight;
+			}
+		}
+		document.getElementById("divheight").style.height=(myheight*0.83)+"px";
+		//初始化表格信息
+		$('#dg').datagrid({
+			fitColumns:true,
+			fit:true,
+			striped : true,
+		    pagination : false,
+		    singleSelect : true,
+		    rownumbers:true,
+		    columns:[[
+		      		{field:'DBNAME',title:'数据库名称',width:100,align:'center'},
+		      		{field:'DBID',title:'数据库编号',width:100,align:'center'},
+		      		{field:'ZK',title:'Zookeeper地址',width:100,align:'center'},
+		      		{field:'CREATEDATE',title:'创建时间',width:100,align:'center'},
+		      		{field:'DO',title:'操作',width:100,align:'center',formatter:formatOper}
+		          ]]
+		});	
+		//加载数据
+		loadData();
+	});
+	function formatOper(val,row,index){
+		var str = "";
+		str += "<span><a href=\"#\" onclick=\"editRow("+index+");\">修改</a></span>";
+		str += "<span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>"
+		str += "<span><a href=\"#\" onclick=\"deleteRow("+index+");\">删除</a></span>";
+		return str;
+	}
+	function loadData(){
+		$.ajax({
+			type: "get",
+			url: "getDbConfig.action",
+			beforeSend: function () {  
+    			// 禁用按钮防止重复提交  
+    			//$("#submit").attr("disabled", true);
+    			$("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body"); 
+ 				$("<div class=\"datagrid-mask-msg\"></div>").html("数据加载中请稍后……").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 }); 
+			},
+			success: function(result){
+				$('#dg').datagrid('loadData',{"rows" : result.list});
+				$(".datagrid-mask").remove(); 
+				$(".datagrid-mask-msg").remove();
+			} 
+		});
+	}
+	function Save(){
+		var dbname=$("#dbname").val();
+		var dbid=$("#dbid").val();
+		var zk=$("#zk").val();
+		dbname = encodeURIComponent(dbname);
+		dbid = encodeURIComponent(dbid);
+		zk = encodeURIComponent(zk);
+		//判断是否为空
+		if(dbname=="" || dbid=="" || zk==""){
+			$.messager.alert('提示', '请填写参数');
+			return;
+		}
+		//判断数据库编号是否已存在
+		var rows = $("#dg").datagrid('getRows');
+		for(var i=0; i<rows.length; i++){
+			if(dbid==rows[i]['DBID']){
+				$.messager.alert('提示', '数据库编号已存在');
+				return;
+			}
+		}
+		$.ajax({
+			type:'get',
+			dataType:'json',
+			data:{'dbname':dbname,'dbid':dbid,'zk':zk},
+			url:'saveDbConfig.action',
+			success:function(result){
+				if(result.success==200){
+					$.messager.alert('提示', result.message);
+					$("#dbname").val("");
+					$("#dbid").val("");
+					$("#zk").val("");
+					loadData();
+				}else{
+					$.messager.alert('提示', result.message);
+				}
+			}
+		});
+	}
+	function deleteRow(index){
+	    $.messager.confirm('确认', '确认删除', function(r){
+	    	if (r){
+	    		$("#dg").datagrid('selectRow',index);
+	    		var row = $("#dg").datagrid('getSelected');
+	    		var dbid = row['DBID'];
+	    		dbid = encodeURIComponent(dbid);
+	    		if(row){
+	    			$.ajax({
+	    				type:'get',
+	    				dataType:'json',
+	    				data:{'dbid':dbid},
+	    				url:'deleteDbConfig.action',
+	    				success:function(result){
+	    					if(result.success==200){
+	    						$.messager.alert('提示', result.message);
+	    						loadData();
+	    					}else{
+	    						$.messager.alert('提示', result.message);
+	    					}
+	    				}
+	    			});
+	    		}else{
+	    			$.messager.alert('提示', '请选择需要删除的行');
+	    		}
+	    	}
+	    });
+	}
+	function editRow(index){
+	    $('#dg').datagrid('selectRow',index);
+	    var row = $('#dg').datagrid('getSelected');  
+	    if (row){  
+	    	$("#error").html("");
+	        $('#dlg').dialog('open').dialog('setTitle','修改配置信息');  
+	        $('#fm').form('load',row);  
+	    }else{
+	    	$.messager.alert('提示', '请选择需要删除的行');
+	    }  
+	}
+	function Update(){
+		var dbname=$("#fmname").val();
+		var dbid=$("#fmid").val();
+		var zk=$("#fmzk").val();
+		dbname = encodeURIComponent(dbname);
+		dbid = encodeURIComponent(dbid);
+		zk = encodeURIComponent(zk);
+		//判断是否为空
+		if(dbname=="" || dbid=="" || zk==""){
+			$("#error").html("<font color=\"red\">输入值不能为空</font>");
+			return;
+		}
+		$.ajax({
+			type:'get',
+			dataType:'json',
+			data:{'dbname':dbname,'dbid':dbid,'zk':zk},
+			url:'editDbConfig.action',
+			success:function(result){
+				if(result.success==200){
+					$.messager.alert('提示', result.message);
+					$("#dlg").dialog('close');
+					loadData();
+				}else{
+					$.messager.alert('提示', result.message);
+				}
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<div style="width:100%;height:40px;background-color:#FAFAFA;">
+		<div style="width:200px;float:left;padding: 10px;color:#797979;font-size:16px">&nbsp;&nbsp;&nbsp;数据库配置</div>
+		<div style="width:100px; padding: 12px;float:right;color:#797979;">数据库配置</div>
+		<div style="width:5px; padding: 12px;float:right;color:#797979;">></div>
+		<div style="width:100px;float:right; text-align:right;padding: 12px;color:#347bb0;">配置管理中心</div>
+	</div>
+	<div>
+	<table class="mytable">		
+		<tr height="40" bgcolor="#eeeeee">
+			<td class="tabletd">
+			&nbsp;&nbsp;数据库名称: <input type="text" id="dbname" name="name" size=35>
+			&nbsp;&nbsp;数据库编号: <input type="text" id="dbid" name="id" size=35>
+			&nbsp;&nbsp;Zookeeper地址: <input type="text" id="zk" name="zk" size=35>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="easyui-linkbutton" onclick="Save()">保存</a>
+			</td>
+		</tr>
+	</table>
+	</div>
+	<div id="divheight" style="padding-top:0.2%;padding-left:0.2%;">		
+	<table id="dg"></table>
+	</div>
+	<div id="dlg" class="easyui-dialog" data-options="closed:true" >
+		<form id="fm" class="easyui-form">
+		<table>
+		    <tr class="tr">
+		        <td class="td1"><label>数据库编号</label></td>
+		        <td class="td2"><input style="text-align:center;" class="easyui-validatebox" name="DBID" id="fmid" readonly="readonly" /></td>
+		    </tr>
+		    <tr class="tr">
+		        <td class="td1"><label>数据库名称</label></td>
+		        <td class="td2"><input style="text-align:center;" class="easyui-validatebox" name="DBNAME" id="fmname" /></td>
+		    </tr>
+		    <tr class="tr">
+		        <td class="td1"><label>Zookeeper地址</label></td>
+		        <td class="td2"><input style="text-align:center;" class="easyui-validatebox" name="ZK" id="fmzk" /></td>
+		    </tr>
+		    <tr class="tr">
+		        <td id="error" class="td1"></td>
+		        <td style="text-align:right;width:120px;"><a href="javascript:void(0)" class="easyui-linkbutton" onclick="Update()">保存</a></td>
+		    </tr>
+		</table>
+		</form>
+	</div>
+</body>
+</html>

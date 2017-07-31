@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/batch 
+	http://www.springframework.org/schema/batch/spring-batch-2.1.xsd
+	http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd">
+
+	<!--
+		<bean id="hdfsWriter"
+		class="com.oreilly.springdata.batch.item.HdfsTextItemWriter">
+		<constructor-arg ref="hadoopFs"/> <property name="basePath"
+		value="/import/data/products/"/> <property name="baseFilename"
+		value="product"/> <property name="fileSuffix" value="txt"/> <property
+		name="rolloverThresholdInBytes" value="100"/> </bean>
+	-->
+
+	<bean id="hadoopService" class="com.bsoft.service.impl.hdfs.HDFSServiceImpl">
+		<property name="hdfsWriterFactory" ref="hdfsWriterFactory" />
+		<property name="hdfsTextFileReadFactory" ref="hdfsReadFactory" />
+		<!-- 原始数据\处理后的数据存放路径 -->
+		<property name="orignalPath" value="/import/data/original/" />
+		<property name="dealPath" value="/import/data/deal/" />
+	</bean>
+
+	<bean id="hdfsWriterFactory" class="com.bsoft.dao.hadoop.hdfs.impl.HdfsTextFileWriterFactory">
+		<constructor-arg ref="hadoopFs" />
+		<property name="basePath" value="/import/data/original/" />
+		<property name="baseFilename" value="product" />
+		<property name="fileSuffix" value="xml" />
+	</bean>
+
+	<bean id="hdfsReadFactory" class="com.bsoft.dao.hadoop.hdfs.impl.HdfsTextFileReadFactory">
+		<property name="configuration" ref="hadoopConfiguration" />
+		<property name="basePath" value="/import/data/original/" />
+		<property name="baseFilename" value="product" />
+		<property name="fileSuffix" value="xml" />
+	</bean>
+
+</beans>

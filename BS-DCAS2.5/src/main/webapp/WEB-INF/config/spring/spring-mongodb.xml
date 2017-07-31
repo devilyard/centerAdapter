@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/data/mongo   
+    http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd 
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/context   
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    
+    <context:property-placeholder location="/WEB-INF/hadoop.properties" />
+
+	<bean id="mongoConf" class="org.springframework.data.mongodb.core.MongoFactoryBean">
+		<!-- 需要根据实际环境进行IP和端口的修改 -->
+		<property name="host" value="${mongodb.ip}" />
+		<property name="port" value="${mongodb.port}" />
+	</bean>
+
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongo" ref="mongoConf" />
+		<!-- 需要修改，类似于操作的数据库名称 -->
+		<constructor-arg name="databaseName" value="test" />
+	</bean>
+
+	<!-- mongodbDAO实现 -->
+	<bean id="mongoDAOService" class="com.bsoft.dao.monodb.impl.MongoDBDAOImpl">
+		<property name="mongoTemplate" ref="mongoTemplate"></property>
+		<property name="collectMap" ref="collectMap" />
+		<!-- 每次去collection抓取数据时的条数 -->
+		<property name="size" value="1000" />
+	</bean>
+
+	<!-- mongodb业务层 -->
+	<bean id="mongodbService" class="com.bsoft.service.impl.monodb.MongoDBServiceImpl">
+		<property name="mongoDAOService" ref="mongoDAOService" />
+		<property name="collectMap" ref="collectMap" />
+	</bean>
+
+	<!-- 配置MONGODB操作的COLLECT信息,以便复用 -->
+	<!-- 需要修改，类似于操作的数据表名称 -->
+	<bean id="collectMap" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<map>
+				<entry key="collectionName1" value="adapterData" />
+				<entry key="collectionName2" value="etlData" />
+				<entry key="collectionName3" value="mpiErrorData" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+</beans>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ssdev="http://www.bsoft.com.cn/schema/ssdev"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd         
+	http://www.bsoft.com.cn/schema/ssdev
+	http://www.bsoft.com.cn/schema/ssdev/ssdev.xsd">
+
+	<!--mpi处理 begin -->
+	<bean id="mpi" class="com.bsoft.service.impl.mpi.MpiProcessorServiceImpl">
+		<property name="serviceWriter" value="mpi.mpiWriter" /> 
+		<property name="serviceProvider" value="mpi.mpiProvider" />
+	</bean>
+	<!--mpi处理 end -->
+
+	<!-- mpi单线程处理 -->
+	<bean id="mpiProcessService" class="com.bsoft.thread.MPIProcess">
+		<property name="mpiProcessorService" ref="mpi" />
+	</bean>
+
+	<!-- mpi多线程处理 -->
+	<bean id="mpiThreadPoolService" class="com.bsoft.thread.MPIProcessThreadPool" />
+</beans>
+
+	
+	
